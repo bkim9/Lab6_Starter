@@ -32,8 +32,9 @@ function getRecipesFromStorage() {
 }
 
 /**
- * Takes in an array of recipes and for each recipe creates a
- * new <recipe-card> element, adds the recipe data to that card
+ * Takes in an array of recipes and 
+ * for each recipe creates a new <recipe-card> element,
+ * adds the recipe data to that card
  * using element.data = {...}, and then appends that new recipe
  * to <main>
  * @param {Array<Object>} recipes An array of recipes
@@ -62,7 +63,7 @@ function saveRecipesToStorage(recipes) {
   // B1. TODO - Complete the functionality as described in this function
   //            header. It is possible in only a single line, but should
   //            be no more than a few lines.
-
+  localStorage.setItem('recipes', JSON.stringify(recipes));
 }
 
 /**
