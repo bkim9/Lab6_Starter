@@ -26,7 +26,7 @@ function getRecipesFromStorage() {
   //           be no more than a few lines.
   var recipes = new Array();
   recipes = JSON.parse(localStorage.getItem('recipes'));
-  return recipes;
+  return recipes==null? []:recipes;
 }
 
 /**
@@ -44,12 +44,13 @@ function addRecipesToDocument(recipes) {
   //            create a <recipe-card> element for each one, and populate
   //            each <recipe-card> with that recipe data using element.data = ...
   //            Append each element to <main>
-  // alert(recipes)
-  recipes.forEach(recipe => {
-    const cardEl = document.createElement("recipe-card");
-    cardEl.data = recipe;
-    mainEl.appendChild(cardEl);
-  });
+  if (recipes != undefined) {
+    recipes.forEach(recipe => {
+      const cardEl = document.createElement("recipe-card");
+      cardEl.data = recipe;
+      mainEl.appendChild(cardEl);
+    });
+  }
 }
 
 /**
@@ -70,33 +71,42 @@ function saveRecipesToStorage(recipes) {
  * <button>.
  */
 function initFormHandler() {
-
   // B2. TODO - Get a reference to the <form> element
   const formEl = document.querySelector("form");
   // B3. TODO - Add an event listener for the 'submit' event, which fires when the
   //            submit button is clicked
   formEl.addEventListener('submit', () => {
-  // Steps B4-B9 will occur inside the event listener from step B3
-  // B4. TODO - Create a new FormData object from the <form> element reference above
-  // B5. TODO - Create an empty object (I'll refer to this object as recipeObject to
-  //            make this easier to read), and then extract the keys and corresponding
-  //            values from the FormData object and insert them into recipeObject
-  const recipeObject = new Object;
-  // B6. TODO - Create a new <recipe-card> element
-  const newCard = document.createElement("recipe-card");
-  // B7. TODO - Add the recipeObject data to <recipe-card> using element.data
-  newCard.data = recipeObject
-  // B8. TODO - Append this new <recipe-card> to <main>
-  if ( mainEl == null) {
-    alert('mainEl not defined in line 89')
-  } else {
-    mainEl.appendChild(newCard);
-  }
-  // B9. TODO - Get the recipes array from localStorage, add this new recipe to it, and
-  //            then save the recipes array back to localStorage
 
+    // Steps B4-B9 will occur inside the event listener from step B3
+    // B4. TODO - Create a new FormData object from the <form> element reference above
+    const formData = new FormData(formEl);
+    // B5. TODO - Create an empty recipeObject 
+    //            then extract the keys and corresponding values from the FormData object and 
+    //            insert them into recipeObject
+    let jsonString = `{`;
+    for ( const entry of formData.entries()) {
+      jsonString += (entry[0] == 'rating' || entry[0] == 'numRatings')?`"${entry[0]}": ${entry[1]},`: `"${entry[0]}": "${entry[1]}",`;
+    }
+    jsonString += `}`;
+    jsonString = jsonString.replace(/,}\s*$/, "}")
+    let recipeObject = JSON.parse(jsonString);
+    // B6. TODO - Create a new <recipe-card> element
+    const newCard = document.createElement("recipe-card");
+    // B7. TODO - Add the recipeObject data to <recipe-card> using element.data
+    
 
-
+    newCard.data = recipeObject; // recipeObject.rating
+    // alert('line100')
+    const mainE = document.querySelector(`main`);
+    // B8. TODO - Append this new <recipe-card> to <main>
+    mainE.appendChild(newCard);
+    // B9. TODO - Get the recipes array from localStorage, 
+    //            add this new recipe to it, and
+    //            then save the recipes array back to localStorage
+    let recipes = getRecipesFromStorage();
+    // alert('line108') 
+    recipes.push(recipeObject);
+    saveRecipesToStorage(recipes);
   });
   
 
@@ -108,12 +118,11 @@ function initFormHandler() {
   // B12. TODO - Clear the local storage
   localStorage.clear();
   // B13. TODO - Delete the contents of <main>
+  let mainEl = document.querySelector('main');
   if ( mainEl == null) {
     alert('mainEl not defined in line 111')
   } else {
     mainEl.innerHTML = '';
   }
   })
-
-
 }
